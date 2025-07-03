@@ -1,0 +1,54 @@
+{% extends 'core/base.html' %}
+{% block title %}
+  Conseil developpement personnelle
+{% endblock %}
+
+{% block content %}
+  <div class="container py-5">
+    <!-- Présentation du coach -->
+    <div class="text-center mb-5">
+      <h1 class="display-4">Bienvenue chez <span class="text-info">Dupont Le Coach</span></h1>
+      <p class="lead">Coach en développement personnel, dédié à vous accompagner vers votre épanouissement.</p>
+    </div>
+
+    <!-- Services proposés -->
+    <section class="mb-5">
+      <h2 class="mb-4">Nos services</h2>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Coaching personnel</h5>
+              <p class="card-text">Accompagnement personnalisé pour développer confiance et motivation.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Gestion du stress</h5>
+              <p class="card-text">Techniques et exercices pratiques pour mieux gérer votre stress au quotidien.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Développement de la confiance en soi</h5>
+              <p class="card-text">Ateliers et séances pour renforcer votre estime personnelle.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Horaires -->
+    <section class="mb-5">
+      <h2>Horaires d'ouverture</h2>
+      <p>
+        Nous sommes disponibles du <strong>lundi au vendredi</strong>, de <strong>9h00 à 18h00</strong>.
+      </p>
+      <p>Pour toute prise de rendez-vous, utilisez le formulaire en ligne accessible depuis le menu.</p>
+    </section>
+  </div>
+{% endblock %}
