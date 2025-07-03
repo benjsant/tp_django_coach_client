@@ -1,0 +1,32 @@
+{% extends 'base.html' %} {% block title %} Page de connexion {% endblock %}
+{%block content %}
+{% if user.is_authenticated %}
+      <p>Connecté sous {{user.username }}</p>
+{% else %}
+
+{% endif %}
+<div class="container py-5">
+  <!-- Présentation du coach -->
+  <div class="text-center mb-5">
+    <h1 class="display-4">Page de Connexion</h1>
+  </div>
+
+  <!-- Services proposés -->
+  <section class="mb-5">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Submit</button>
+      
+      
+    </form>
+  </section>
+
+  <!-- Horaires -->
+  <section class="mb-5">
+    {% for message in messages %}
+    <div class="alert alert-danger" role="alert">{{ message }}</div>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}
