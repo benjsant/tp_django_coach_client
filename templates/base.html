@@ -1,68 +1,97 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Mon Site{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="UTF-8" />
+    <title>
+      {% block title %}
+        Mon Site
+      {% endblock %}
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
 
-    <!-- Bootstrap Icons (facultatif) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-</head>
-<body>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  </head>
+  <body>
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">MonSite</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
-                aria-controls="navbarContent" aria-expanded="false" aria-label="Menu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">MonSite</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Menu"><span class="navbar-toggler-icon"></span></button>
 
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if '/polls/' in request.path %}active{% endif %}" href="/polls/">Sondages</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if '/projets/' in request.path %}active{% endif %}" href="/projets/">Projets</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/contact/' %}active{% endif %}" href="/contact/">Contact</a>
-                    </li>
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Accueil</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if '/polls/' in request.path %}active{% endif %}" href="/polls/">Sondages</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if '/projets/' in request.path %}active{% endif %}" href="/projets/">Projets</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/contact/' %}active{% endif %}" href="/contact/">Contact</a>
+            </li>
+          </ul>
+
+          <!-- Auth -->
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            {% if user.is_authenticated %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-success" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">👤 {{ user.username }}</a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                  <li>
+                    <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">🚪 Se déconnecter</a>
+                  </li>
                 </ul>
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link text-light" href="https://github.com/ton-compte" target="_blank">
-                            <i class="bi bi-github"></i> GitHub
-                        </a>
-                    </li>
-                </ul>
-            </div>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link text-light" href="{% url 'accounts:login' %}"><i class="bi bi-box-arrow-in-right"></i> Connexion</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-light" href="{% url 'accounts:signup' %}"><i class="bi bi-person-plus"></i> Inscription</a>
+              </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link text-light" href="https://github.com/ton-compte" target="_blank"><i class="bi bi-github"></i> GitHub</a>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
     <!-- FIN NAVBAR -->
 
     <!-- CONTENU -->
     <main class="container mt-4">
-        {% block content %}
-        {% endblock %}
+      {% block content %}
+
+      {% endblock %}
     </main>
 
     <!-- FOOTER -->
     <footer class="bg-dark text-light text-center py-4 mt-5">
-        <div class="container">
-            <p class="mb-0">&copy; 2025 Personal Development@Inc. Tous droits réservés.</p>
-        </div>
+      <div class="container">
+        <p class="mb-0">&copy; 2025 Personal Development@Inc. Tous droits réservés.</p>
+      </div>
     </footer>
 
     <!-- Bootstrap JS -->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-</body>
+    <script>
+      // Auto-hide toasts après 3 secondes
+      document.addEventListener('DOMContentLoaded', function () {
+        const toastElList = [].slice.call(document.querySelectorAll('.toast'))
+        toastElList.forEach(function (toastEl) {
+          const toast = new bootstrap.Toast(toastEl, { delay: 2500 })
+          toast.show()
+        })
+      })
+    </script>
+  </body>
 </html>

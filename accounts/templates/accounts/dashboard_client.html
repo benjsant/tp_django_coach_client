@@ -1,0 +1,29 @@
+{% extends 'accounts/dashboard.html' %}
+
+{% block title %}Dashboard Client{% endblock %}
+
+{% block dashboard_content %}
+  <h1 class="mb-4">Bienvenue {{ user.first_name }} 👋</h1>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title">📅 Mes rendez-vous</h5>
+          <p class="card-text">Consultez vos prochains rendez-vous avec votre coach.</p>
+          <a href={#"{% url 'rendezvous:mes_rendezvous' %}"#} "#" class="btn btn-outline-success">Voir mes rendez-vous</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title">💬 Messages & Feedback</h5>
+          <p class="card-text">Échangez avec votre coach, envoyez un message ou relisez vos anciens échanges.</p>
+          <a href={# "{% url 'messagerie:inbox' %}"#}"#" class="btn btn-outline-success">Accéder à la messagerie</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

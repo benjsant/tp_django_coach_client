@@ -2,36 +2,63 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages 
-
+from .forms import CustomLoginForm, CustomSignupForm
+from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import login_required 
 # Create your views here.
 
 def login_user(request):
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)   # ⚠️ utilisez le form pour la validation
+        form = CustomLoginForm(request, data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data["username"]
-            password = form.cleaned_data["password"]
+            user = form.get_user()
+            login(request, user)
 
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                #  ⬇️  redirection vers l’URL nommée "accueil" de l’app core
-                return redirect("index")   
-            else:
-                messages.error(request, "Identifiant ou mot de passe incorrect.")
+            return redirect("accounts:dashboard")
         else:
-            messages.error(request, "Formulaire invalide.")
+            messages.error(request, "Identifiant ou mot de passe incorrect.")
     else:
-        form = AuthenticationForm()
+        form = CustomLoginForm()
 
     return render(request, "accounts/login.html", {"form": form})
 
 def logout_user(request):
     logout(request)
-    return redirect("core:accueil")
+    messages.success(request, "Vous avez été déconnecté avec succès.")
+    return redirect("core:index")
 
 def signup_user(request):
-    pass
+    if request.method == "POST":
+        form = CustomSignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            client_group, created = Group.objects.get_or_create(name="client")
+            client_group.user_set.add(user)
+            login(request,user)  # connexion automatique
+            request.session['show_signup_modal'] = True  # flag pour modal
+            return redirect("accounts:dashboard")  # redirige vers dashboard
+        else:
+            messages.error(request,"Une erreur est survenue. Veuillez corriger les champs .")
+    else: 
+        form = CustomSignupForm()
 
-def dashboard_user(request):
-    pass
+    return render(request, "accounts/signup.html",{"form":form})
+
+@login_required
+def dashboard(request):
+    if request.user.groups.filter(name="coach").exists():
+        return redirect("accounts:dashboard_coach")
+    elif request.user.groups.filter(name="client").exists():
+        return redirect("accounts:dashboard_client")
+    else: 
+        return redirect("core:index")
+    
+@login_required
+def dashboard_client(request):
+    return render(request,'accounts/dashboard_client.html') 
+
+@login_required
+def dashboard_coach(request):
+    return render(request,'accounts/dashboard_coach.html') 
+    # rendez_vous = RendezVous.objects.filter(coach=request.user)
+    # return render(request, 'dashboard_coach.html', {'rendez_vous': rendez_vous})
