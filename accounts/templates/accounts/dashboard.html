@@ -23,7 +23,7 @@
 
     <div class="collapse navbar-collapse" id="navbarDashboard">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        {% if user.groups.filter(name='coach').exists %}
+        {% if is_coach %}
           <li class="nav-item"><a class="nav-link" href="#">📚 Rendez‑vous</a></li>
           <li class="nav-item"><a class="nav-link" href="#">📊 Statistiques</a></li>
         {% else %}
@@ -48,37 +48,6 @@
 <main class="container mt-4">
   {% block dashboard_content %}{% endblock %}
 </main>
-
-{# ----------------------------------------------------------- #}
-{#  MODAL « Inscription réussie » – s'affiche une seule fois   #}
-{# ----------------------------------------------------------- #}
-{% with request.session.pop('show_signup_modal', None) as show_modal %}
-  {% if show_modal %}
-    <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header bg-success text-white">
-            <h5 class="modal-title" id="signupModalLabel">Inscription réussie !</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
-          </div>
-          <div class="modal-body">
-            Bienvenue {{ user.username }}&nbsp;! Votre compte a bien été créé. 🎉
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Commencer</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const modal = new bootstrap.Modal(document.getElementById('signupModal'));
-        modal.show();
-      });
-    </script>
-  {% endif %}
-{% endwith %}
 
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>

@@ -55,10 +55,23 @@ def dashboard(request):
     
 @login_required
 def dashboard_client(request):
-    return render(request,'accounts/dashboard_client.html') 
+    # Récupérer et supprimer la clé 'show_signup_modal' de la session
+    show_signup_modal = request.session.pop('show_signup_modal', None)
+    context = {
+        'is_client': True,
+        'is_coach': False,
+        'show_signup_modal': show_signup_modal,  # Passe ça au template,
+        }
+    return render(request, 'accounts/dashboard_client.html', context)
 
 @login_required
 def dashboard_coach(request):
-    return render(request,'accounts/dashboard_coach.html') 
+    # Récupérer et supprimer la clé 'show_signup_modal' de la session
+    show_signup_modal = request.session.pop('show_signup_modal', None)
+    context = {
+        'is_client': False,
+        'is_coach': True,
+    }
+    return render(request, 'accounts/dashboard_coach.html', context)
     # rendez_vous = RendezVous.objects.filter(coach=request.user)
     # return render(request, 'dashboard_coach.html', {'rendez_vous': rendez_vous})
