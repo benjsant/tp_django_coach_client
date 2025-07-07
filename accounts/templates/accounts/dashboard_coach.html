@@ -1,0 +1,29 @@
+{% extends 'accounts/dashboard.html' %}
+
+{% block title %}Dashboard Coach{% endblock %}
+
+{% block dashboard_content %}
+  <h1 class="mb-4">Bonjour Coach {{ user.first_name }} 👋</h1>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title">📋 Tous les rendez-vous</h5>
+          <p class="card-text">Gérez tous les rendez-vous avec vos clients.</p>
+          <a href={# "{% url 'rendezvous:liste_rendezvous' %}"  #}"#"class="btn btn-outline-primary">Voir les rendez-vous</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title">📊 Statistiques & Suivi</h5>
+          <p class="card-text">Consultez les progrès de vos clients ou les statistiques de coaching.</p>
+          <a href={#"{% url 'statistiques:vue_generale' %}"#}"#" class="btn btn-outline-primary">Voir les stats</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
