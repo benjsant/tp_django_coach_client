@@ -1,0 +1,91 @@
+/* Variables CSS */
+:root {
+  --color-primary: #3b82f6;       /* bleu vif */
+  --color-primary-dark: #2563eb;  /* bleu plus foncé */
+  --color-secondary: #6b7280;     /* gris moyen */
+  --color-secondary-light: #9ca3af; /* gris clair */
+  --color-bg: #ffffff;            /* blanc */
+  --color-bg-alt: #f9fafb;        /* gris très clair */
+  --color-text: #1f2937;          /* texte sombre */
+  --color-text-light: #4b5563;    /* texte gris */
+  --color-border: #e5e7eb;        /* bordure légère */
+  --font-family: 'Poppins', sans-serif;
+  --color-success: #22c55e;        /* Vert "success" */
+  --color-success-dark: #15803d;   /* Vert foncé au hover */
+}
+
+
+/* Fond général pour les dashboards (l'image est définie dynamiquement dans le HTML) */
+.dashboard-body {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-container {
+  background-color: rgba(255, 255, 255, 0.85) !important; /* semi-transparent, mais lisible */
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+}
+
+/* Titre + sous-titre */
+h1, h2 {
+  color: #1c3b2f;
+}
+
+/* Navbar améliorée */
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar {
+  backdrop-filter: blur(10px);
+}
+
+/* Table hover */
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 128, 96, 0.07);
+}
+
+/* Buttons primary */
+.btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+}
+
+/* Buttons success */
+.btn-success {
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  color: #fff;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+  background-color: var(--color-success-dark);
+  border-color: var(--color-success-dark);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4); /* vert doux transparent */
+}

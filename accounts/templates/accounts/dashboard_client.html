@@ -1,57 +1,96 @@
 {% extends 'accounts/dashboard.html' %}
+{% load static %}
 
 {% block title %}Dashboard Client{% endblock %}
 
+{% block dashboard_body_style %}
+  style="background-image: url('{% static 'accounts/img/background_client.png' %}')"
+{% endblock %}
+
 {% block dashboard_content %}
-  <h1 class="mb-4">Bienvenue {{ user.first_name }} 👋</h1>
+  <div class="dashboard-container p-4 my-5 shadow rounded-4">
+    <h1 class="mb-4">Bienvenue {{ user.first_name|default:user.username }}</h1>
 
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
-          <h5 class="card-title">📅 Mes rendez-vous</h5>
-          <p class="card-text">Consultez vos prochains rendez-vous avec votre coach.</p>
-          <a href={#"{% url 'rendezvous:mes_rendezvous' %}"#} "#" class="btn btn-outline-success">Voir mes rendez-vous</a>
+    <h2 class="mt-5 mb-3">Mes prochains rendez-vous</h2>
+
+    {% if mes_rendezvous %}
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Heure</th>
+            <th>Coach</th>
+            <th>Objet</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rdv in mes_rendezvous %}
+            <tr>
+              <td>{{ rdv.date|date:"d/m/Y" }}</td>
+              <td>{{ rdv.heure_debut|time:"H:i" }}</td>
+              <td>{{ rdv.coach.get_full_name|default:rdv.coach.username }}</td>
+              <td>{{ rdv.objet }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>Vous n'avez aucun rendez-vous programmé ?  </p>
+      <a class="btn btn-primary" href="{% url 'seances:prise_rdv' %}" role="button">Prendre rendez-vous</a>
+    {% endif %}
+
+    {# --- MODAL INSCRIPTION --- #}
+    {% if show_signup_modal %}
+      <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+              <h5 class="modal-title" id="signupModalLabel">Inscription réussie !</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+              Bienvenue {{ user.username }} ! Votre compte a bien été créé.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal">Commencer</button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="col-md-6">
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
-          <h5 class="card-title">💬 Messages & Feedback</h5>
-          <p class="card-text">Échangez avec votre coach, envoyez un message ou relisez vos anciens échanges.</p>
-          <a href={# "{% url 'messagerie:inbox' %}"#}"#" class="btn btn-outline-success">Accéder à la messagerie</a>
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const modal = new bootstrap.Modal(document.getElementById('signupModal'));
+          modal.show();
+        });
+      </script>
+    {% endif %}
+
+    {# --- MODAL PRISE DE RDV --- #}
+    {% if show_rdv_modal %}
+      <div class="modal fade" id="rdvModal" tabindex="-1" aria-labelledby="rdvModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+              <h5 class="modal-title" id="rdvModalLabel">Rendez-vous confirmé</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+              Votre rendez-vous a bien été enregistré. Vous pouvez le consulter dans votre espace personnel.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fermer</button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const modal = new bootstrap.Modal(document.getElementById('rdvModal'));
+          modal.show();
+        });
+      </script>
+    {% endif %}
   </div>
-  {# ----------------------------------------------------------- #}
-  {#  MODAL « Inscription réussie » – s'affiche une seule fois   #}
-  {# ----------------------------------------------------------- #}
-  {% if show_signup_modal %}
-    <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header bg-success text-white">
-            <h5 class="modal-title" id="signupModalLabel">Inscription réussie !</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
-          </div>
-          <div class="modal-body">
-            Bienvenue {{ user.username }}&nbsp;! Votre compte a bien été créé. 🎉
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Commencer</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const modal = new bootstrap.Modal(document.getElementById('signupModal'));
-        modal.show();
-      });
-    </script>
-  {% endif %}
 {% endblock %}

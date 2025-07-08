@@ -1,0 +1,41 @@
+{% extends 'accounts/dashboard.html' %}  {# reste dans l’univers client #}
+
+{% block title %}Prendre un rendez‑vous{% endblock %}
+
+{% block dashboard_content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+
+  <div class="container">
+    <h2 class="mb-4">Prendre un rendez‑vous avec {{ coach.get_full_name|default:coach.username }}</h2>
+
+    <form method="post" class="card p-4 shadow-sm">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% for field in form %}
+        <div class="mb-3">
+          {{ field.label_tag }} {{ field }}
+          <div class="text-danger small">{{ field.errors }}</div>
+        </div>
+      {% endfor %}
+      <button class="btn btn-success">Valider</button>
+      <a class="btn btn-outline-secondary ms-2" href="{% url 'accounts:dashboard_client' %}">Annuler</a>
+    </form>
+  </div>
+  <!-- Initialisation de Flatpickr -->
+
+<script>
+  flatpickr("input[type='date']", {
+    dateFormat: "d/m/Y",
+    locale: "fr",
+    disable: [
+      function(date) {
+        return (date.getDay() === 0 || date.getDay() === 6);
+      }
+    ],
+    minDate: "today"
+  });
+</script>
+{% endblock %}

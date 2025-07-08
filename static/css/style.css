@@ -1,0 +1,212 @@
+/* style.css - Thème clair style Blowfish */
+
+/* Variables CSS */
+:root {
+  --color-primary: #3b82f6;       /* bleu vif */
+  --color-primary-dark: #2563eb;  /* bleu plus foncé */
+  --color-secondary: #6b7280;     /* gris moyen */
+  --color-secondary-light: #9ca3af; /* gris clair */
+  --color-bg: #ffffff;            /* blanc */
+  --color-bg-alt: #f9fafb;        /* gris très clair */
+  --color-text: #1f2937;          /* texte sombre */
+  --color-text-light: #4b5563;    /* texte gris */
+  --color-border: #e5e7eb;        /* bordure légère */
+  --font-family: 'Poppins', sans-serif;
+  --color-success: #22c55e;        /* Vert "success" */
+  --color-success-dark: #15803d;   /* Vert foncé au hover */
+}
+
+/* Global */
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-primary);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 1rem;
+  color: var(--color-text-light);
+}
+
+/* Links */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+a:hover, a:focus {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.navbar .nav-link {
+  color: var(--color-secondary);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: var(--color-primary);
+}
+
+.navbar .nav-link.active {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* Navbar brand */
+.navbar-brand {
+  color: var(--color-primary);
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+
+.navbar-brand:hover, .navbar-brand:focus {
+  color: var(--color-primary-dark);
+  text-decoration: none;
+}
+
+/* Buttons primary */
+.btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+}
+
+/* Buttons success */
+.btn-success {
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  color: #fff;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+  background-color: var(--color-success-dark);
+  border-color: var(--color-success-dark);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4); /* vert doux transparent */
+}
+
+/* Cards */
+.card {
+  background-color: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(59,130,246,0.15);
+}
+
+/* Toasts */
+.toast.bg-success {
+  background-color: var(--color-success) !important;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+}
+
+/* Footer */
+footer {
+  background-color: var(--color-bg-alt);
+  color: var(--color-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Container alternate background */
+.container.py-5 {
+  background-color: var(--color-bg-alt);
+  border-radius: 1.25rem;
+  padding: 3rem 2rem;
+  box-shadow: 0 6px 18px rgba(59,130,246,0.15);
+}
+
+/* Typography helpers */
+.lead {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+}
+
+/* Form inputs */
+.form-control {
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 8px rgba(59,130,246,0.3);
+}
+
+/* Utility classes */
+.text-primary {
+  color: var(--color-primary) !important;
+}
+
+.text-secondary {
+  color: var(--color-secondary) !important;
+}
+
+.fw-bold {
+  font-weight: 700 !important;
+}
+
+.fw-semibold {
+  font-weight: 600 !important;
+}
+
+.mt-5 {
+  margin-top: 3rem !important;
+}
+
+.mb-5 {
+  margin-bottom: 3rem !important;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}

@@ -22,6 +22,7 @@ from django.conf import settings
 urlpatterns = [
     path('', include("core.urls")),  # Ajoute cette ligne
     path('', include("accounts.urls")), 
+    path('', include("seances.urls")), 
     path('admin/', admin.site.urls),
 ] + debug_toolbar_urls()
 
