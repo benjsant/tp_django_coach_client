@@ -114,9 +114,9 @@ class ModifierNoteHistoriqueForm(forms.ModelForm):
             'notes': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': 'Modifier ou ajouter une note'
-            })
+                'placeholder': "Modifier ou ajouter une note sur cette séance"
+            }),
         }
         labels = {
-            'notes': 'Note ou commentaire (facultatif)'
+            'notes': "Note ou commentaire",
         }

@@ -11,7 +11,7 @@ from .models import Seance,RdvHistorique
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from django.utils.timezone import localtime, now
+from django.utils.timezone import localtime, now, localdate
 from django.views.decorators.cache import never_cache
 from .forms import ModifierNoteHistoriqueForm 
 
@@ -145,16 +145,31 @@ def historique_client(request):
 @login_required
 @never_cache
 def historique_coach(request):
+    coach = request.user
+    today = timezone.localdate()
+
+    # Tous les historiques passés du coach
     historiques = RdvHistorique.objects.filter(
-        coach=request.user,
-        date__lte=now().date()
+        coach=coach,
+        date__lte=today
+    ).order_by('-date', '-heure_debut')
+
+    # IDs séances déjà traitées (date + heure)
+    seances_traitees = RdvHistorique.objects.filter(coach=coach).values_list('date', 'heure_debut')
+
+    # Séances oubliées : séances passées non traitées
+    seances_oubliees = Seance.objects.filter(
+        coach=coach,
+        date__lt=today
+    ).exclude(
+        date__in=[s[0] for s in seances_traitees],
+        heure_debut__in=[s[1] for s in seances_traitees],
     ).order_by('-date', '-heure_debut')
 
     if request.method == "POST":
         rdv_id = request.POST.get("rdv_id")
-        rdv = get_object_or_404(RdvHistorique, id=rdv_id, coach=request.user)
+        rdv = get_object_or_404(RdvHistorique, id=rdv_id, coach=coach)
         form = ModifierNoteHistoriqueForm(request.POST, instance=rdv)
-
         if form.is_valid():
             form.save()
             messages.success(request, "Note mise à jour avec succès.")
@@ -162,9 +177,29 @@ def historique_coach(request):
             messages.error(request, "Erreur lors de la mise à jour de la note.")
         return redirect("seances:historique_coach")
 
-    # GET : affichage normal + formulaire vide pour les modals
     context = {
         'historique_rdv': historiques,
-        'form_note': ModifierNoteHistoriqueForm(),  # formulaire vide, utilisé dans modals
+        'form_note': ModifierNoteHistoriqueForm(),
+        'seances_oubliees': seances_oubliees,
+        'has_seances_oubliees': seances_oubliees.exists(),
+        'is_coach': True,
     }
     return render(request, 'seances/historique_coach.html', context)
+
+@login_required
+@never_cache
+def futures_sessions_coach(request):
+    coach = request.user
+    tomorrow = timezone.localdate() + timezone.timedelta(days=1)
+
+    # Séances futures à partir de J+1 inclus
+    futures_seances = Seance.objects.filter(
+        coach=coach,
+        date__gte=tomorrow
+    ).order_by('date', 'heure_debut')
+
+    context = {
+        'futures_seances': futures_seances,
+        'is_coach': True,
+    }
+    return render(request, 'seances/futures_sessions_coach.html', context)

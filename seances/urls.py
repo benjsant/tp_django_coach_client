@@ -10,4 +10,5 @@ urlpatterns = [
      path("absent/<int:seance_id>/", views.marquer_absent, name="marquer_absent"),
      path("histo_client/", views.historique_client , name="histo_client"),
      path("histo_coach/", views.historique_coach , name="histo_coach"),
+     path('futures_sessions/', views.futures_sessions_coach, name='futures_sessions_coach'),
 ]
