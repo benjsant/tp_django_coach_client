@@ -6,7 +6,7 @@ from .forms import CustomLoginForm, CustomSignupForm
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required 
 from django.views.decorators.cache import never_cache
-
+from django.utils.timezone import now, localtime,localdate
 from seances.models import Seance
 from datetime import date
 
@@ -54,6 +54,7 @@ def signup_user(request):
 
 
 @login_required
+@never_cache
 def dashboard(request):
     if request.user.groups.filter(name="coach").exists():
         return redirect("accounts:dashboard_coach")
@@ -61,37 +62,45 @@ def dashboard(request):
         return redirect("accounts:dashboard_client")
     else: 
         return redirect("core:index")
-    
+
+
 @login_required
+@never_cache
 def dashboard_client(request):
     # Récupérer et supprimer la clé 'show_signup_modal' de la session
     show_signup_modal = request.session.pop('show_signup_modal', None)
-    show_rdv_modal = request.session.pop('show_rdv_modal', None)
 
-    # On récupère les rendez-vous futurs ou du jour, triés
+    current_datetime = localtime(now())  # datetime aware au fuseau local
+
     mes_rendezvous = Seance.objects.filter(
+        client=request.user
+    ).filter(
+        date__gt=current_datetime.date()
+    ) | Seance.objects.filter(
         client=request.user,
-        date__gte=date.today()
-    ).order_by('date', 'heure_debut')
-
+        date=current_datetime.date(),
+        heure_debut__gt=current_datetime.time()
+    )
+    mes_rendezvous = mes_rendezvous.order_by('date', 'heure_debut')
 
     context = {
         'is_client': True,
         'is_coach': False,
-        'show_signup_modal': show_signup_modal,  # Passe ça au template,
-        'show_rdv_modal': show_rdv_modal,
+        'show_signup_modal': show_signup_modal,
         'mes_rendezvous': mes_rendezvous,
-        }
+    }
     return render(request, 'accounts/dashboard_client.html', context)
 
 @login_required
+@never_cache
 def dashboard_coach(request):
+    today = localdate()  # Date du jour, timezone-aware
 
-    # Récupérer les rendez-vous à venir du coach connecté
+    # Ne récupérer que les séances du jour
     rendezvous_coach = Seance.objects.filter(
         coach=request.user,
-        date__gte=date.today()
-    ).order_by('date', 'heure_debut')
+        date=today
+    ).order_by('heure_debut')
 
     context = {
         'is_client': False,

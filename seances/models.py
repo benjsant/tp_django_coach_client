@@ -20,3 +20,26 @@ class Seance(models.Model):
     class Meta:
         unique_together = ("date", "heure_debut", "coach")  # ✅ Important : éviter conflit entre coachs
         ordering = ["date", "heure_debut"]
+
+
+class RdvHistorique(models.Model):
+    CODE_CHOIX = [
+        (1, "Présent"),
+        (2, "Absent"),
+        (3, "Annulé par le client"),
+        (4, "Annulé par le coach"),
+    ]
+
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name="rdv_historiques")
+    coach = models.ForeignKey(User, on_delete=models.CASCADE, related_name="rdv_historiques_coach")
+    date = models.DateField()
+    heure_debut = models.TimeField()
+    objet = models.CharField(max_length=255)
+    code_rdv = models.IntegerField(choices=CODE_CHOIX)
+    notes = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Historique {self.get_code_rdv_display()} - {self.client.username} avec {self.coach.username} le {self.date}"
+
+    class Meta:
+        ordering = ["-date", "-heure_debut"]

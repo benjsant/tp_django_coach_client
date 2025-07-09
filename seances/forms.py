@@ -5,8 +5,23 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone 
 
 from .models import Seance 
+from seances.models import RdvHistorique
 
 class PriseSeanceForm(forms.ModelForm):
+
+    OBJET_CHOICES = [
+        ("Coaching personnel", "Coaching personnel"),
+        ("Gestion du stress", "Gestion du stress"),
+        ("Développement de la confiance en soi", "Développement de la confiance en soi"),
+    ]
+
+    objet = forms.ChoiceField(
+        choices=OBJET_CHOICES,
+        widget=forms.Select(attrs={"class": "form-select"}),
+        label="Objet de la séance",
+        initial="Coaching personnel"
+    )
+
     """
     Formulaire Bootstrap pour qu’un client réserve un créneau chez le coach.
     Les validations métier (créneau dispo, marge de 10 min, horaires autorisés)
@@ -22,11 +37,6 @@ class PriseSeanceForm(forms.ModelForm):
             ),
             "heure_debut":forms.TimeInput(
                 attrs={"type":"time","class":"form-control"}
-            ),
-            "objet":forms.TextInput(
-                attrs={"class":"form-control",
-                        "placeholder":"Objet de la séance....",
-                       }
             ),
         }
 
@@ -84,3 +94,29 @@ class PriseSeanceForm(forms.ModelForm):
             seance.full_clean()
             seance.save()
         return seance
+    
+class FinRdvForm(forms.Form):
+    notes = forms.CharField(
+        label="Note ou commentaire (facultatif)",
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 3,
+            'placeholder': "Notes ou retour sur la séance"
+        }),
+        required=False
+    )
+
+class ModifierNoteHistoriqueForm(forms.ModelForm):
+    class Meta:
+        model = RdvHistorique
+        fields = ['notes']
+        widgets = {
+            'notes': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Modifier ou ajouter une note'
+            })
+        }
+        labels = {
+            'notes': 'Note ou commentaire (facultatif)'
+        }

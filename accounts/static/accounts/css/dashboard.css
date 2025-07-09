@@ -12,6 +12,11 @@
   --font-family: 'Poppins', sans-serif;
   --color-success: #22c55e;        /* Vert "success" */
   --color-success-dark: #15803d;   /* Vert foncé au hover */
+  --color-danger: #ef4444;         /* rouge vif */
+  --color-danger-dark: #b91c1c;    /* rouge foncé */
+  --color-warning: #f59e0b;
+  --color-warning-dark: #d97706;
+
 }
 
 
@@ -89,3 +94,76 @@ h1, h2 {
   text-decoration: none;
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4); /* vert doux transparent */
 }
+
+/* Buttons secondary */
+.btn-secondary {
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  background-color: var(--color-secondary-light);
+  border-color: var(--color-secondary-light);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
+}
+
+/* Buttons danger */
+.btn-danger {
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+  background-color: var(--color-danger-dark);
+  border-color: var(--color-danger-dark);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Buttons warning */
+.btn-warning {
+  background-color: var(--color-warning);
+  border-color: var(--color-warning);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.btn-warning:hover,
+.btn-warning:focus {
+  background-color: var(--color-warning-dark);
+  border-color: var(--color-warning-dark);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); /* Jaune-orange */
+}
+
+
+.navbar .nav-link.text-danger {
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar .nav-link.text-danger:hover{
+  color: #991b1b; /* Rouge foncé */
+  cursor: pointer;
+  text-decoration: underline;
+}
+

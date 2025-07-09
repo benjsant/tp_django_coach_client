@@ -1,0 +1,109 @@
+{% extends 'accounts/dashboard.html' %}
+{% load static %}
+
+{% block title %}Historique Coach{% endblock %}
+
+{% block dashboard_body_style %}
+  style="background-image: url('{% static 'accounts/img/background_coach.png' %}');"
+{% endblock %}
+
+{% block dashboard_content %}
+  <h1 class="mb-4">Historique des rendez-vous passés</h1>
+
+  {% if historiques %}
+    <table class="table table-striped table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Heure</th>
+          <th>Client</th>
+          <th>Objet</th>
+          <th>Statut</th>
+          <th class="text-center">Notes</th>
+          <th class="text-center">Modifier note</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rdv in historiques %}
+          <tr>
+            <td>{{ rdv.date|date:"d/m/Y" }}</td>
+            <td>{{ rdv.heure_debut|time:"H:i" }}</td>
+            <td>{{ rdv.client.get_full_name|default:rdv.client.username }}</td>
+            <td>{{ rdv.objet }}</td>
+            <td>
+              {% if rdv.code_rdv == 1 %}
+                <span class="badge bg-success">Présent</span>
+              {% elif rdv.code_rdv == 2 %}
+                <span class="badge bg-danger">Annulé</span>
+              {% elif rdv.code_rdv == 3 %}
+                <span class="badge bg-warning text-dark">Absent</span>
+              {% else %}
+                <span class="badge bg-secondary">Autre</span>
+              {% endif %}
+            </td>
+
+            <td class="text-center">
+              {% if rdv.notes %}
+                <!-- Bouton afficher note -->
+                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalVoirNote{{ rdv.id }}" title="Voir la note">
+                  <i class="bi bi-search"></i>
+                </button>
+
+                <!-- Modal affichage note -->
+                <div class="modal fade" id="modalVoirNote{{ rdv.id }}" tabindex="-1" aria-labelledby="modalVoirNoteLabel{{ rdv.id }}" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="modalVoirNoteLabel{{ rdv.id }}">Note pour le rendez-vous du {{ rdv.date|date:"d/m/Y" }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p>{{ rdv.notes|linebreaks }}</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% else %}
+                <em>Aucune note</em>
+              {% endif %}
+            </td>
+
+            <td class="text-center">
+              <!-- Bouton modifier note -->
+              <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalModifierNote{{ rdv.id }}" title="Modifier la note">
+                <i class="bi bi-pencil"></i>
+              </button>
+
+              <!-- Modal modifier note -->
+              <div class="modal fade" id="modalModifierNote{{ rdv.id }}" tabindex="-1" aria-labelledby="modalModifierNoteLabel{{ rdv.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                  <form method="post" action="{% url 'accounts:modifier_note_rdv' rdv.id %}">
+                    {% csrf_token %}
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="modalModifierNoteLabel{{ rdv.id }}">Modifier la note du rendez-vous</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                      </div>
+                      <div class="modal-body">
+                        <textarea name="notes" class="form-control" rows="4" placeholder="Modifier ou ajouter une note">{{ rdv.notes }}</textarea>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-warning">Enregistrer</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Vous n'avez aucun rendez-vous passé.</p>
+  {% endif %}
+{% endblock %}
