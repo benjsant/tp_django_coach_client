@@ -1,7 +1,9 @@
 {% extends 'accounts/dashboard.html' %}
 {% load static %}
 
-{% block title %}Dashboard Client{% endblock %}
+{% block title %}
+  Dashboard Client
+{% endblock %}
 
 {% block dashboard_body_style %}
   style="background-image: url('{% static 'accounts/img/background_client.png' %}')"
@@ -21,50 +23,47 @@
             <th>Heure</th>
             <th>Coach</th>
             <th>Objet</th>
-            <th>Actions</th> 
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {% for rdv in mes_rendezvous %}
             <tr>
-              <td>{{ rdv.date|date:"d/m/Y" }}</td>
-              <td>{{ rdv.heure_debut|time:"H:i" }}</td>
+              <td>{{ rdv.date|date:'d/m/Y' }}</td>
+              <td>{{ rdv.heure_debut|time:'H:i' }}</td>
               <td>{{ rdv.coach.get_full_name|default:rdv.coach.username }}</td>
               <td>{{ rdv.objet }}</td>
               <td>
-  <!-- Bouton annulation -->
-  <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalAnnulation{{ rdv.id }}">
-    <i class="bi bi-x-circle"></i>
-  </button>
-</td>
+                <!-- Bouton annulation -->
+                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalAnnulation{{ rdv.id }}" aria-expanded="false"><i class="bi bi-x-circle"></i></button>
+              </td>
             </tr>
             <!-- Modal d'annulation -->
-<div class="modal fade" id="modalAnnulation{{ rdv.id }}" tabindex="-1" aria-labelledby="modalLabel{{ rdv.id }}" aria-hidden="true">
-  <div class="modal-dialog">
-    <form method="post" action="{% url 'seances:annuler_seance' rdv.id %}">
-      {% csrf_token %}
-      <div class="modal-content">
-        <div class="modal-header bg-danger text-white">
-          <h5 class="modal-title" id="modalLabel{{ rdv.id }}">Confirmer l’annulation</h5>
-          <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
-        </div>
-        <div class="modal-body">
-          <p>Voulez-vous vraiment annuler ce rendez-vous ?</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-          <button type="submit" class="btn btn-danger">Confirmer</button>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
+            <div class="modal fade" id="modalAnnulation{{ rdv.id }}" tabindex="-1" aria-labelledby="modalLabel{{ rdv.id }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <form method="post" action="{% url 'seances:annuler_seance' rdv.id %}">
+                  {% csrf_token %}
+                  <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                      <h5 class="modal-title" id="modalLabel{{ rdv.id }}">Confirmer l’annulation</h5>
+                      <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Voulez-vous vraiment annuler ce rendez-vous ?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                      <button type="submit" class="btn btn-danger">Confirmer</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
           {% endfor %}
         </tbody>
       </table>
-      
     {% else %}
-      <p>Vous n'avez aucun rendez-vous programmé ?  </p>
+      <p>Vous n'avez aucun rendez-vous programmé ?</p>
       <a class="btn btn-primary" href="{% url 'seances:prise_rdv' %}" role="button">Prendre rendez-vous</a>
     {% endif %}
 
@@ -77,9 +76,7 @@
               <h5 class="modal-title" id="signupModalLabel">Inscription réussie !</h5>
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
-            <div class="modal-body">
-              Bienvenue {{ user.username }} ! Votre compte a bien été créé.
-            </div>
+            <div class="modal-body">Bienvenue {{ user.username }} ! Votre compte a bien été créé.</div>
             <div class="modal-footer">
               <button type="button" class="btn btn-success" data-bs-dismiss="modal">Commencer</button>
             </div>
@@ -89,9 +86,9 @@
 
       <script>
         document.addEventListener('DOMContentLoaded', () => {
-          const modal = new bootstrap.Modal(document.getElementById('signupModal'));
-          modal.show();
-        });
+          const modal = new bootstrap.Modal(document.getElementById('signupModal'))
+          modal.show()
+        })
       </script>
     {% endif %}
 
@@ -101,17 +98,14 @@
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header bg-success text-white">
-              <h5 class="modal-title" id="rdvModalLabel">Rendez-vous </h5>
+              <h5 class="modal-title" id="rdvModalLabel">Rendez-vous</h5>
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
-            
-              {% for message in messages %}
-              <div class="modal-body">
-                {{message|safe}}
-                 </div>
-              
-              {% endfor %}
-           
+
+            {% for message in messages %}
+              <div class="modal-body">{{ message|safe }}</div>
+            {% endfor %}
+
             <div class="modal-footer">
               <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fermer</button>
             </div>
@@ -121,9 +115,9 @@
 
       <script>
         document.addEventListener('DOMContentLoaded', () => {
-          const modal = new bootstrap.Modal(document.getElementById('rdvModal'));
-          modal.show();
-        });
+          const modal = new bootstrap.Modal(document.getElementById('rdvModal'))
+          modal.show()
+        })
       </script>
     {% endif %}
   </div>

@@ -1,7 +1,9 @@
 {% extends 'accounts/dashboard.html' %}
 {% load static %}
 
-{% block title %}Dashboard Coach{% endblock %}
+{% block title %}
+  Dashboard Coach
+{% endblock %}
 
 {% block dashboard_body_style %}
   style="background-image: url('{% static 'accounts/img/background_coach.png' %}');"
@@ -26,22 +28,16 @@
       <tbody>
         {% for rdv in rendezvous_coach %}
           <tr>
-            <td>{{ rdv.date|date:"d/m/Y" }}</td>
-            <td>{{ rdv.heure_debut|time:"H:i" }}</td>
+            <td>{{ rdv.date|date:'d/m/Y' }}</td>
+            <td>{{ rdv.heure_debut|time:'H:i' }}</td>
             <td>{{ rdv.client.get_full_name|default:rdv.client.username }}</td>
             <td>{{ rdv.objet }}</td>
             <td class="text-center">
               <!-- Bouton annuler -->
-              <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalAnnuler{{ rdv.id }}" title="Annuler ce rendez-vous">
-                <i class="bi bi-x-circle"></i>
-              </button>
+              <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalAnnuler{{ rdv.id }}" title="Annuler ce rendez-vous"><i class="bi bi-x-circle"></i></button>
               <!-- Bouton confirmer fin -->
-              <button type="button" class="btn btn-sm btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalConfirmer{{ rdv.id }}" title="Confirmer fin de rendez-vous">
-                <i class="bi bi-check-circle"></i>
-              </button>
-              <button type="button" class="btn btn-sm btn-warning ms-2" data-bs-toggle="modal" data-bs-target="#modalAbsent{{ rdv.id }}" title="Marquer comme absent">
-  <i class="bi bi-person-x-fill"></i>
-</button>
+              <button type="button" class="btn btn-sm btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalConfirmer{{ rdv.id }}" title="Confirmer fin de rendez-vous"><i class="bi bi-check-circle"></i></button>
+              <button type="button" class="btn btn-sm btn-warning ms-2" data-bs-toggle="modal" data-bs-target="#modalAbsent{{ rdv.id }}" title="Marquer comme absent"><i class="bi bi-person-x-fill"></i></button>
 
               <!-- Modal annulation -->
               <div class="modal fade" id="modalAnnuler{{ rdv.id }}" tabindex="-1" aria-labelledby="modalAnnulerLabel{{ rdv.id }}" aria-hidden="true">
@@ -51,9 +47,7 @@
                       <h5 class="modal-title" id="modalAnnulerLabel{{ rdv.id }}">Annuler le rendez-vous</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                     </div>
-                    <div class="modal-body">
-                      Êtes-vous sûr de vouloir annuler ce rendez-vous du {{ rdv.date|date:"d/m/Y" }} à {{ rdv.heure_debut|time:"H:i" }} avec {{ rdv.client.get_full_name|default:rdv.client.username }} ?
-                    </div>
+                    <div class="modal-body">Êtes-vous sûr de vouloir annuler ce rendez-vous du {{ rdv.date|date:'d/m/Y' }} à {{ rdv.heure_debut|time:'H:i' }} avec {{ rdv.client.get_full_name|default:rdv.client.username }} ?</div>
                     <div class="modal-footer">
                       <form method="post" action="{% url 'seances:annuler_seance' rdv.id %}">
                         {% csrf_token %}
@@ -65,53 +59,52 @@
                 </div>
               </div>
 
-<!-- Modal confirmation fin rendez-vous -->
-<div class="modal fade" id="modalConfirmer{{ rdv.id }}" tabindex="-1" aria-labelledby="modalConfirmerLabel{{ rdv.id }}" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form method="post" action="{% url 'seances:confirmer_fin_rdv' rdv.id %}">
-        {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalConfirmerLabel{{ rdv.id }}">Confirmer la fin du rendez-vous</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-        </div>
-        <div class="modal-body">
-          <p>Confirmez-vous que le rendez-vous du <strong>{{ rdv.date|date:"d/m/Y" }}</strong> à <strong>{{ rdv.heure_debut|time:"H:i" }}</strong> est terminé ?</p>
-          <div class="mb-3">
-            <label for="notes{{ rdv.id }}" class="form-label">Notes ou commentaires (facultatif)</label>
-            <textarea name="notes" id="notes{{ rdv.id }}" class="form-control" rows="3" placeholder="Ajoutez un commentaire ou une remarque sur la séance…"></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
-          <button type="submit" class="btn btn-success">Oui, confirmer</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<!-- Modal confirmation d'absence -->
-<div class="modal fade" id="modalAbsent{{ rdv.id }}" tabindex="-1" aria-labelledby="modalAbsentLabel{{ rdv.id }}" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalAbsentLabel{{ rdv.id }}">Client absent</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-      </div>
-      <div class="modal-body">
-        Confirmez-vous que {{ rdv.client.get_full_name|default:rdv.client.username }} était absent au rendez-vous du {{ rdv.date|date:"d/m/Y" }} à {{ rdv.heure_debut|time:"H:i" }} ?
-      </div>
-      <div class="modal-footer">
-        <form method="post" action="{% url 'seances:marquer_absent' rdv.id %}">
-          {% csrf_token %}
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
-          <button type="submit" class="btn btn-warning">Oui, marquer absent</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
+              <!-- Modal confirmation fin rendez-vous -->
+              <div class="modal fade" id="modalConfirmer{{ rdv.id }}" tabindex="-1" aria-labelledby="modalConfirmerLabel{{ rdv.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <form method="post" action="{% url 'seances:confirmer_fin_rdv' rdv.id %}">
+                      {% csrf_token %}
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="modalConfirmerLabel{{ rdv.id }}">Confirmer la fin du rendez-vous</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p>
+                          Confirmez-vous que le rendez-vous du <strong>{{ rdv.date|date:'d/m/Y' }}</strong> à <strong>{{ rdv.heure_debut|time:'H:i' }}</strong> est terminé ?
+                        </p>
+                        <div class="mb-3">
+                          <label for="notes{{ rdv.id }}" class="form-label">Notes ou commentaires (facultatif)</label>
+                          <textarea name="notes" id="notes{{ rdv.id }}" class="form-control" rows="3" placeholder="Ajoutez un commentaire ou une remarque sur la séance…"></textarea>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                        <button type="submit" class="btn btn-success">Oui, confirmer</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <!-- Modal confirmation d'absence -->
+              <div class="modal fade" id="modalAbsent{{ rdv.id }}" tabindex="-1" aria-labelledby="modalAbsentLabel{{ rdv.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="modalAbsentLabel{{ rdv.id }}">Client absent</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">Confirmez-vous que {{ rdv.client.get_full_name|default:rdv.client.username }} était absent au rendez-vous du {{ rdv.date|date:'d/m/Y' }} à {{ rdv.heure_debut|time:'H:i' }} ?</div>
+                    <div class="modal-footer">
+                      <form method="post" action="{% url 'seances:marquer_absent' rdv.id %}">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                        <button type="submit" class="btn btn-warning">Oui, marquer absent</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </td>
           </tr>
         {% endfor %}

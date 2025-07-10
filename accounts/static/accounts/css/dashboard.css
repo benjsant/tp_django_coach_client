@@ -1,24 +1,22 @@
 /* Variables CSS */
 :root {
-  --color-primary: #3b82f6;       /* bleu vif */
-  --color-primary-dark: #2563eb;  /* bleu plus foncé */
-  --color-secondary: #6b7280;     /* gris moyen */
+  --color-primary: #3b82f6; /* bleu vif */
+  --color-primary-dark: #2563eb; /* bleu plus foncé */
+  --color-secondary: #6b7280; /* gris moyen */
   --color-secondary-light: #9ca3af; /* gris clair */
-  --color-bg: #ffffff;            /* blanc */
-  --color-bg-alt: #f9fafb;        /* gris très clair */
-  --color-text: #1f2937;          /* texte sombre */
-  --color-text-light: #4b5563;    /* texte gris */
-  --color-border: #e5e7eb;        /* bordure légère */
-  --font-family: 'Poppins', sans-serif;
-  --color-success: #22c55e;        /* Vert "success" */
-  --color-success-dark: #15803d;   /* Vert foncé au hover */
-  --color-danger: #ef4444;         /* rouge vif */
-  --color-danger-dark: #b91c1c;    /* rouge foncé */
+  --color-bg: #ffffff; /* blanc */
+  --color-bg-alt: #f9fafb; /* gris très clair */
+  --color-text: #1f2937; /* texte sombre */
+  --color-text-light: #4b5563; /* texte gris */
+  --color-border: #e5e7eb; /* bordure légère */
+  --font-family: "Poppins", sans-serif;
+  --color-success: #22c55e; /* Vert "success" */
+  --color-success-dark: #15803d; /* Vert foncé au hover */
+  --color-danger: #ef4444; /* rouge vif */
+  --color-danger-dark: #b91c1c; /* rouge foncé */
   --color-warning: #f59e0b;
   --color-warning-dark: #d97706;
-
 }
-
 
 /* Fond général pour les dashboards (l'image est définie dynamiquement dans le HTML) */
 .dashboard-body {
@@ -26,18 +24,24 @@
   background-position: center;
   background-repeat: no-repeat;
   min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .dashboard-container {
-  background-color: rgba(255, 255, 255, 0.85) !important; /* semi-transparent, mais lisible */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.85
+  ) !important; /* semi-transparent, mais lisible */
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
 }
 
 /* Titre + sous-titre */
-h1, h2 {
+h1,
+h2 {
   color: #1c3b2f;
 }
 
@@ -72,7 +76,7 @@ h1, h2 {
   border-color: var(--color-primary-dark);
   color: #fff;
   text-decoration: none;
-  box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 /* Buttons success */
@@ -155,15 +159,25 @@ h1, h2 {
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); /* Jaune-orange */
 }
 
-
 .navbar .nav-link.text-danger {
   font-weight: 500;
   transition: color 0.3s ease;
 }
 
-.navbar .nav-link.text-danger:hover{
+.navbar .nav-link.text-danger:hover {
   color: #991b1b; /* Rouge foncé */
   cursor: pointer;
   text-decoration: underline;
 }
 
+.offcanvas-top.fullscreen {
+  height: 100vh;
+}
+
+.offcanvas-top.fullscreen {
+  height: 100vh !important;
+}
+
+.dropdown-menu {
+  z-index: 1100;
+}

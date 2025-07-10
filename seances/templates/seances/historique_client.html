@@ -32,12 +32,12 @@
               <td>
                 {% if rdv.code_rdv == 1 %}
                   <span class="badge bg-success">Présent</span>
-                {% elif rdv.code_rdv == 2 %}
-                  <span class="badge bg-danger">Annulé</span>
                 {% elif rdv.code_rdv == 3 %}
-                  <span class="badge bg-warning text-dark">Absent</span>
-                  {% elif rdv.code_rdv == 4 %}
-                  <span class="badge bg-primary text-dark">Annulation Coach</span>
+                  <span class="badge bg-danger">Annulé</span>
+                {% elif rdv.code_rdv == 2 %}
+                  <span class="badge bg-warning ">Absent</span>
+                {% elif rdv.code_rdv == 4 %}
+                  <span class="badge bg-primary ">Annulation Coach</span>
                 {% else %}
                   <span class="badge bg-secondary">Inconnu</span> {{rdv.code_rdv}}
                 {% endif %}

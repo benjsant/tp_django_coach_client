@@ -7,26 +7,25 @@
 {% endblock %}
 
 {% block dashboard_content %}
-  <h1>Historique des séances passées</h1>
+<h1>Historique des séances passées</h1>
 
-  <!-- Bouton unique pour séances oubliées -->
-  {% if has_seances_oubliees %}
+{% if has_seances_oubliees %}
   <div class="mb-4">
     <button class="btn btn-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSeancesOubliees" aria-controls="offcanvasSeancesOubliees">
       Séances oubliées à traiter ({{ seances_oubliees.count }})
     </button>
   </div>
-  {% endif %}
+{% endif %}
 
-  <!-- Offcanvas pour séances oubliées -->
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasSeancesOubliees" aria-labelledby="offcanvasSeancesOublieesLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="offcanvasSeancesOublieesLabel">Séances oubliées</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
-    </div>
-    <div class="offcanvas-body">
-      {% if seances_oubliees %}
-      <table class="table">
+<!-- Offcanvas haut pleine page -->
+<div class="offcanvas offcanvas-top fullscreen" tabindex="-1" id="offcanvasSeancesOubliees" aria-labelledby="offcanvasSeancesOublieesLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasSeancesOublieesLabel">Séances oubliées</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
+  </div>
+  <div class="offcanvas-body">
+    {% if seances_oubliees %}
+      <table class="table table-bordered">
         <thead>
           <tr>
             <th>Date</th>
@@ -38,74 +37,72 @@
         </thead>
         <tbody>
           {% for rdv in seances_oubliees %}
-          <tr>
-            <td>{{ rdv.date|date:"d/m/Y" }}</td>
-            <td>{{ rdv.heure_debut|time:"H:i" }}</td>
-            <td>{{ rdv.client.get_full_name|default:rdv.client.username }}</td>
-            <td>{{ rdv.objet }}</td>
-            <td>
-              <!-- Popover annuler -->
-              <button type="button" class="btn btn-sm btn-danger" id="btnAnnuler{{ rdv.id }}" data-bs-toggle="popover" data-bs-html="true"
-                data-bs-content='
-                  <form method="post" action="{% url "seances:annuler_seance" rdv.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-danger">Oui, annuler</button>
-                  </form>
-                  <button type="button" class="btn btn-sm btn-secondary" onclick="bootstrap.Popover.getInstance(document.getElementById(`btnAnnuler{{ rdv.id }}`)).hide()">Non</button>
-                ' title="Confirmer annulation">
-                <i class="bi bi-x-circle"></i>
-              </button>
-
-              <!-- Popover absent -->
-              <button type="button" class="btn btn-sm btn-warning ms-2" id="btnAbsent{{ rdv.id }}" data-bs-toggle="popover" data-bs-html="true"
-                data-bs-content='
-                  <form method="post" action="{% url "seances:marquer_absent" rdv.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-warning">Oui, marquer absent</button>
-                  </form>
-                  <button type="button" class="btn btn-sm btn-secondary" onclick="bootstrap.Popover.getInstance(document.getElementById(`btnAbsent{{ rdv.id }}`)).hide()">Non</button>
-                ' title="Confirmer absence">
-                <i class="bi bi-person-x-fill"></i>
-              </button>
-
-              <!-- Offcanvas fin séance + notes -->
-              <button class="btn btn-sm btn-success ms-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvasConfirmer{{ rdv.id }}">
-                <i class="bi bi-check-circle"></i>
-              </button>
-
-              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasConfirmer{{ rdv.id }}" aria-labelledby="offcanvasConfirmerLabel{{ rdv.id }}">
-                <div class="offcanvas-header">
-                  <h5 class="offcanvas-title" id="offcanvasConfirmerLabel{{ rdv.id }}">Confirmer fin de séance</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
+            <tr>
+              <td>{{ rdv.date|date:"d/m/Y" }}</td>
+              <td>{{ rdv.heure_debut|time:"H:i" }}</td>
+              <td>{{ rdv.client.get_full_name|default:rdv.client.username }}</td>
+              <td>{{ rdv.objet }}</td>
+              <td>
+                <!-- Annuler -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-x-circle"></i>
+                  </button>
+                  <div class="dropdown-menu p-2 text-center">
+                    <form method="post" action="{% url 'seances:annuler_seance' rdv.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-danger mb-1">Oui, annuler</button>
+                    </form>
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="dropdown">Non</button>
+                  </div>
                 </div>
-                <div class="offcanvas-body">
-                  <form method="post" action="{% url 'seances:confirmer_fin_rdv' rdv.id %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="rdv_id" value="{{ rdv.id }}">
-                    <p>Confirmez-vous que le rendez-vous du <strong>{{ rdv.date|date:"d/m/Y" }}</strong> à <strong>{{ rdv.heure_debut|time:"H:i" }}</strong> est terminé ?</p>
-                    <div class="mb-3">
-                      <label for="notes{{ rdv.id }}" class="form-label">Notes ou commentaires (facultatif)</label>
-                      <textarea name="notes" id="notes{{ rdv.id }}" class="form-control" rows="3" placeholder="Ajoutez un commentaire ou une remarque sur la séance…"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success">Oui, confirmer</button>
-                  </form>
-                </div>
-              </div>
 
-            </td>
-          </tr>
+                <!-- Marquer absent -->
+                <div class="btn-group ms-2">
+                  <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-x-fill"></i>
+                  </button>
+                  <div class="dropdown-menu p-2 text-center">
+                    <form method="post" action="{% url 'seances:marquer_absent' rdv.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-warning mb-1">Oui, absent</button>
+                    </form>
+                    <button type="button" class="btn btn-sm btn-secondary">Non</button>
+                  </div>
+                </div>
+
+                <!-- Confirmer fin + notes -->
+                <div class="btn-group ms-2">
+                  <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-check-circle"></i>
+                  </button>
+                  <div class="dropdown-menu p-3" style="min-width: 300px;">
+                    <form method="post" action="{% url 'seances:confirmer_fin_rdv' rdv.id %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="rdv_id" value="{{ rdv.id }}">
+                      <p class="mb-2">Confirmer la fin de séance ?</p>
+                      <div class="mb-2">
+                        <label for="notes{{ rdv.id }}" class="form-label">Notes (optionnel)</label>
+                        <textarea name="notes" id="notes{{ rdv.id }}" class="form-control" rows="3" placeholder="Votre commentaire…"></textarea>
+                      </div>
+                      <button type="submit" class="btn btn-sm btn-success">Confirmer</button>
+                    </form>
+                  </div>
+                </div>
+              </td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
-      {% else %}
+    {% else %}
       <p>Aucune séance oubliée à traiter.</p>
-      {% endif %}
-    </div>
+    {% endif %}
   </div>
+</div>
 
-  <!-- Historique complet -->
-  <h2>Historique des séances</h2>
-  {% if historique_rdv %}
+<!-- Historique général -->
+<h2>Historique des séances</h2>
+{% if historique_rdv %}
   <table class="table table-striped">
     <thead>
       <tr>
@@ -120,60 +117,45 @@
     </thead>
     <tbody>
       {% for rdv in historique_rdv %}
-      <tr>
-        <td>{{ rdv.date|date:"d/m/Y" }}</td>
-        <td>{{ rdv.heure_debut|time:"H:i" }}</td>
-        <td>{{ rdv.client.get_full_name|default:rdv.client.username }}</td>
-        <td>{{ rdv.objet }}</td>
-        <td>{{ rdv.get_code_rdv_display }}</td>
-        <td>{{ rdv.notes|default:"-" }}</td>
-        <td>
-          <!-- Bouton ouvrir modal modif note -->
-          <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalModifierNote{{ rdv.id }}">
-            <i class="bi bi-pencil"></i>
-          </button>
+        <tr>
+          <td>{{ rdv.date|date:"d/m/Y" }}</td>
+          <td>{{ rdv.heure_debut|time:"H:i" }}</td>
+          <td>{{ rdv.client.get_full_name|default:rdv.client.username }}</td>
+          <td>{{ rdv.objet }}</td>
+          <td>{{ rdv.get_code_rdv_display }}</td>
+          <td>{{ rdv.notes|default:"-" }}</td>
+          <td>
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalModifierNote{{ rdv.id }}">
+              <i class="bi bi-pencil"></i>
+            </button>
 
-          <!-- Modal modif note -->
-          <div class="modal fade" id="modalModifierNote{{ rdv.id }}" tabindex="-1" aria-labelledby="modalModifierNoteLabel{{ rdv.id }}" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <form method="post" action="{% url 'seances:historique_coach' %}">
-                  {% csrf_token %}
-                  <input type="hidden" name="rdv_id" value="{{ rdv.id }}">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="modalModifierNoteLabel{{ rdv.id }}">Modifier la note</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-                  </div>
-                  <div class="modal-body">
-                    <textarea name="notes" class="form-control" rows="5" required>{{ rdv.notes }}</textarea>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Enregistrer</button>
-                  </div>
-                </form>
+            <div class="modal fade" id="modalModifierNote{{ rdv.id }}" tabindex="-1" aria-labelledby="modalModifierNoteLabel{{ rdv.id }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <form method="post" action="{% url 'seances:historique_coach' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="rdv_id" value="{{ rdv.id }}">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="modalModifierNoteLabel{{ rdv.id }}">Modifier la note</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                      <textarea name="notes" class="form-control" rows="5" required>{{ rdv.notes }}</textarea>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                      <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
-          </div>
-
-        </td>
-      </tr>
+          </td>
+        </tr>
       {% endfor %}
     </tbody>
   </table>
-  {% else %}
+{% else %}
   <p>Aucun historique de séances.</p>
-  {% endif %}
-
-{% endblock %}
-
-{% block extra_js %}
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-    popoverTriggerList.forEach(function (popoverTriggerEl) {
-      new bootstrap.Popover(popoverTriggerEl)
-    });
-  });
-</script>
+{% endif %}
 {% endblock %}
