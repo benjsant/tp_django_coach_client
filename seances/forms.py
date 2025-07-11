@@ -7,7 +7,33 @@ from django.utils import timezone
 from .models import Seance 
 from seances.models import RdvHistorique
 
+"""
+Ce module contient des formulaires pour la gestion des séances et des rendez-vous dans une application Django.
+
+Classes :
+- PriseSeanceForm : Formulaire pour permettre à un client de réserver un créneau chez un coach.
+- FinRdvForm : Formulaire pour permettre à un coach d'ajouter des notes ou commentaires à la fin d'un rendez-vous.
+- ModifierNoteHistoriqueForm : Formulaire pour modifier les notes d'un rendez-vous dans l'historique.
+
+"""
 class PriseSeanceForm(forms.ModelForm):
+    """
+    Formulaire pour qu’un client réserve un créneau chez le coach.
+
+    Ce formulaire inclut des validations pour s'assurer que :
+    - Le créneau est dans le futur.
+    - Les rendez-vous ne peuvent pas être réservés le week-end.
+    - Il n'y a pas de conflits avec d'autres rendez-vous (délai minimum de 10 minutes).
+
+    Attributs :
+    - OBJET_CHOICES : Liste des choix d'objets pour la séance.
+    - objet : Champ de sélection pour l'objet de la séance.
+
+    Méthodes :
+    - __init__() : Initialise le formulaire avec le client et le coach.
+    - clean() : Effectue les validations globales sur les données du formulaire.
+    - save() : Enregistre la séance en associant le client et le coach.
+    """
 
     OBJET_CHOICES = [
         ("Coaching personnel", "Coaching personnel"),
@@ -96,6 +122,15 @@ class PriseSeanceForm(forms.ModelForm):
         return seance
     
 class FinRdvForm(forms.Form):
+    """
+    Formulaire pour permettre à un coach d'ajouter des notes ou commentaires à la fin d'un rendez-vous.
+
+    Attributs :
+    - notes : Champ de texte pour saisir des notes ou commentaires facultatifs.
+
+    Méthodes :
+    - __init__() : Initialise le formulaire avec les attributs spécifiés.
+    """
     notes = forms.CharField(
         label="Note ou commentaire (facultatif)",
         widget=forms.Textarea(attrs={
@@ -107,6 +142,15 @@ class FinRdvForm(forms.Form):
     )
 
 class ModifierNoteHistoriqueForm(forms.ModelForm):
+    """
+    Formulaire pour modifier les notes d'un rendez-vous dans l'historique.
+
+    Attributs :
+    - notes : Champ de texte pour modifier ou ajouter une note sur la séance.
+
+    Méthodes :
+    - __init__() : Initialise le formulaire avec les attributs spécifiés.
+    """
     class Meta:
         model = RdvHistorique
         fields = ['notes']

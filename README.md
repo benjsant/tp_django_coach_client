@@ -161,5 +161,5 @@ Accéder à l'application sur : http://127.0.0.1:8000
 
 ## 📄 Licence
 
-Ce projet est sous licence **MIT**. Voir le fichier `LICENSE`.
+Ce projet est sous licence **BSD 3-Clause**. Voir le fichier `LICENSE`.
 

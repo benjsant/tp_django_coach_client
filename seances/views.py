@@ -14,11 +14,36 @@ from .models import Seance,RdvHistorique
 from django.views.decorators.http import require_POST
 from django.views.decorators.cache import never_cache
 
+"""
+Ce module contient des vues pour la gestion des rendez-vous et de l'historique des séances dans une application Django.
+
+Fonctions :
+- prise_rdv : Permet à un client de prendre un rendez-vous avec un coach.
+- annuler_seance : Permet à un client ou à un coach d'annuler une séance.
+- marquer_absent : Permet à un coach de marquer un client comme absent.
+- confirmer_fin_rdv : Permet à un coach de confirmer la fin d'un rendez-vous.
+- historique_client : Affiche l'historique des rendez-vous d'un client.
+- historique_coach : Affiche l'historique des rendez-vous d'un coach et permet de modifier des notes.
+- futures_sessions_coach : Affiche les séances futures d'un coach.
+
+"""
 
 User = get_user_model()
 
 @login_required
 def prise_rdv(request):
+    """
+    Permet à un client de prendre un rendez-vous avec un coach.
+
+    Récupère la liste des coachs disponibles et affiche un formulaire pour la prise de rendez-vous.
+    Si le formulaire est soumis et valide, le rendez-vous est enregistré.
+
+    Paramètres :
+    - request : L'objet HttpRequest contenant les données de la requête.
+
+    Retourne :
+    - Un rendu de la page de prise de rendez-vous avec le formulaire et le coach sélectionné.
+    """
     # Récupérer tous les coachs (users dans groupe 'coach')
     coachs = User.objects.filter(groups__name='coach')
 
@@ -47,6 +72,19 @@ def prise_rdv(request):
 @require_POST
 @login_required
 def annuler_seance(request, seance_id):
+    """
+    Permet à un client ou à un coach d'annuler une séance.
+
+    Vérifie que l'utilisateur a l'autorisation d'annuler la séance, puis archive le rendez-vous dans l'historique
+    avant de supprimer la séance.
+
+    Paramètres :
+    - request : L'objet HttpRequest contenant les données de la requête.
+    - seance_id : L'identifiant de la séance à annuler.
+
+    Retourne :
+    - Une redirection vers le tableau de bord approprié avec un message de succès.
+    """
     seance = get_object_or_404(Seance, id=seance_id)
 
     # Vérification : seul le client ou le coach concerné peut annuler
@@ -77,6 +115,18 @@ def annuler_seance(request, seance_id):
 @login_required
 @require_POST
 def marquer_absent(request, seance_id):
+    """
+    Permet à un coach de marquer un client comme absent.
+
+    Crée un enregistrement dans l'historique des rendez-vous avec le code d'absence, puis supprime la séance.
+
+    Paramètres :
+    - request : L'objet HttpRequest contenant les données de la requête.
+    - seance_id : L'identifiant de la séance à marquer comme absente.
+
+    Retourne :
+    - Une redirection vers le tableau de bord du coach avec un message de succès.
+    """
     seance = get_object_or_404(Seance, id=seance_id, coach=request.user)
 
     RdvHistorique.objects.create(
@@ -97,6 +147,18 @@ def marquer_absent(request, seance_id):
 @login_required
 @require_POST
 def confirmer_fin_rdv(request, rdv_id):
+    """
+    Permet à un coach de confirmer la fin d'un rendez-vous.
+
+    Crée un enregistrement dans l'historique des rendez-vous avec le code de présence, puis supprime la séance.
+
+    Paramètres :
+    - request : L'objet HttpRequest contenant les données de la requête.
+    - rdv_id : L'identifiant du rendez-vous à confirmer.
+
+    Retourne :
+    - Une redirection vers le tableau de bord du coach avec un message de succès ou d'erreur.
+    """
     rdv = get_object_or_404(Seance, id=rdv_id, coach=request.user)
     form = FinRdvForm(request.POST)
 
@@ -120,6 +182,17 @@ def confirmer_fin_rdv(request, rdv_id):
 @login_required
 @never_cache
 def historique_client(request):
+    """
+    Affiche l'historique des rendez-vous d'un client.
+
+    Récupère tous les anciens rendez-vous du client connecté et les affiche dans un rendu.
+
+    Paramètres :
+    - request : L'objet HttpRequest contenant les données de la requête.
+
+    Retourne :
+    - Un rendu de la page d'historique des rendez-vous du client.
+    """
     current_datetime = localtime(now())  # datetime aware au fuseau local
 
     # On récupère tous les anciens rendez-vous du client connecté
@@ -145,6 +218,17 @@ def historique_client(request):
 @login_required
 @never_cache
 def historique_coach(request):
+    """
+    Affiche l'historique des rendez-vous d'un coach et permet de modifier des notes.
+
+    Récupère tous les anciens rendez-vous du coach et les séances oubliées, et gère la mise à jour des notes.
+
+    Paramètres :
+    - request : L'objet HttpRequest contenant les données de la requête.
+
+    Retourne :
+    - Un rendu de la page d'historique des rendez-vous du coach.
+    """
     coach = request.user
     today = timezone.localdate()
 
@@ -189,6 +273,17 @@ def historique_coach(request):
 @login_required
 @never_cache
 def futures_sessions_coach(request):
+    """
+    Affiche les séances futures d'un coach.
+
+    Récupère toutes les séances à venir pour le coach connecté et les affiche dans un rendu.
+
+    Paramètres :
+    - request : L'objet HttpRequest contenant les données de la requête.
+
+    Retourne :
+    - Un rendu de la page des futures séances du coach.
+    """
     coach = request.user
     tomorrow = timezone.localdate() + timezone.timedelta(days=1)
 
