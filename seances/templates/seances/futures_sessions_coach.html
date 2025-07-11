@@ -1,0 +1,94 @@
+{% extends 'accounts/dashboard.html' %}
+{% load static %}
+{% block title %}Futures séances Coach{% endblock %}
+
+{% block dashboard_body_style %}
+style="background-image: url('{% static 'accounts/img/background_coach.png' %}');"
+{% endblock %}
+
+{% block dashboard_content %}
+<h1>Mes prochaines séances (à partir de demain)</h1>
+
+{% if futures_seances %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Heure</th>
+      <th>Client</th>
+      <th>Objet</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for seance in futures_seances %}
+    <tr>
+      <td>{{ seance.date|date:"d/m/Y" }}</td>
+      <td>{{ seance.heure_debut|time:"H:i" }}</td>
+      <td>{{ seance.client.get_full_name|default:seance.client.username }}</td>
+      <td>{{ seance.objet }}</td>
+      <td>
+        <!-- Bouton annuler séance avec modal -->
+        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+          data-bs-target="#modalAnnuler{{ seance.id }}">
+          <i class="bi bi-x-circle"></i> Annuler
+        </button>
+
+        <!-- Modal confirmation annulation -->
+        <div class="modal fade" id="modalAnnuler{{ seance.id }}" tabindex="-1"
+          aria-labelledby="modalAnnulerLabel{{ seance.id }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="post" action="{% url 'seances:annuler_seance' seance.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalAnnulerLabel{{ seance.id }}">Confirmer annulation</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                  <p>Êtes-vous sûr de vouloir annuler la séance du <strong>{{ seance.date|date:"d/m/Y" }}</strong> à
+                    <strong>{{ seance.heure_debut|time:"H:i" }}</strong> avec <strong>
+                      {{seance.client.get_full_name|default:seance.client.username }}</strong> ?
+                  </p>
+                  <p>Cette action est irréversible.</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                  <button type="submit" class="btn btn-danger">Confirmer annulation</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>Aucune séance future programmée.</p>
+{% endif %}
+{% if messages %}
+<div id="toastContainer" class="position-fixed start-50 translate-middle-x" style="top: 80px; z-index: 1100;">
+  {% for message in messages %}
+  <div id="toastMessage" class="toast align-items-center text-white bg-success border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body">{{ message }}</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+        aria-label="Fermer"></button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toastEl = document.getElementById('toastMessage');
+    const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    toast.show();
+  });
+</script>
+{% endif %}
+
+{% endblock %}

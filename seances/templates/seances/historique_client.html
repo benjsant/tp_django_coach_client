@@ -1,0 +1,53 @@
+{% extends 'accounts/dashboard.html' %}
+{% load static %}
+
+{% block title %}Historique de mes séances{% endblock %}
+
+{% block dashboard_body_style %}
+  style="background-image: url('{% static 'accounts/img/background_client.png' %}')"
+{% endblock %}
+
+{% block dashboard_content %}
+  <div class="dashboard-container p-4 my-5 shadow rounded-4">
+    <h1 class="mb-4">Historique de mes séances</h1>
+
+    {% if mes_rdv_historiques %}
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Heure</th>
+            <th>Coach</th>
+            <th>Objet</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rdv in mes_rdv_historiques %}
+            <tr>
+              <td>{{ rdv.date|date:"d/m/Y" }}</td>
+              <td>{{ rdv.heure_debut|time:"H:i" }}</td>
+              <td>{{ rdv.coach.get_full_name|default:rdv.coach.username }}</td>
+              <td>{{ rdv.objet }}</td>
+              <td>
+                {% if rdv.code_rdv == 1 %}
+                  <span class="badge bg-success">Présent</span>
+                {% elif rdv.code_rdv == 3 %}
+                  <span class="badge bg-danger">Annulé</span>
+                {% elif rdv.code_rdv == 2 %}
+                  <span class="badge bg-warning ">Absent</span>
+                {% elif rdv.code_rdv == 4 %}
+                  <span class="badge bg-primary ">Annulation Coach</span>
+                {% else %}
+                  <span class="badge bg-secondary">Inconnu</span> {{rdv.code_rdv}}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>Vous n'avez pas encore de rendez-vous passés.</p>
+    {% endif %}
+  </div>
+{% endblock %}
