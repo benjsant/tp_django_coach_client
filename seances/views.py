@@ -4,16 +4,16 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.utils.timezone import localtime, now, localdate
 
 from .forms import PriseSeanceForm,FinRdvForm
+from .forms import ModifierNoteHistoriqueForm 
+
 from .models import Seance,RdvHistorique
 
-from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
-from django.utils.timezone import localtime, now, localdate
 from django.views.decorators.cache import never_cache
-from .forms import ModifierNoteHistoriqueForm 
+
 
 User = get_user_model()
 

@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'widget_tweaks',
 ]
 
 STATIC_URL = "static/"
@@ -134,16 +133,3 @@ INTERNAL_IPS = [
     "127.0.0.1",
     # ...
 ]
-
-#Config pour desactiver en cas de test 
-TESTING = "test" in sys.argv or "PYTEST_VERSION" in os.environ
-
-if not TESTING:
-    INSTALLED_APPS = [
-        *INSTALLED_APPS,
-        "debug_toolbar",
-    ]
-    MIDDLEWARE = [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-        *MIDDLEWARE,
-    ]

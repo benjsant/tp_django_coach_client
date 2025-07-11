@@ -113,4 +113,33 @@
   {% else %}
     <p>Vous n'avez aucun rendez-vous programmé pour aujourd'hui.</p>
   {% endif %}
+  
+{% if messages %}
+  <div class="modal fade" id="rdvModal" tabindex="-1" aria-labelledby="rdvModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="rdvModalLabel">Notification</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+
+        {% for message in messages %}
+          <div class="modal-body">{{ message|safe }}</div>
+        {% endfor %}
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = new bootstrap.Modal(document.getElementById('rdvModal'))
+      modal.show()
+    })
+  </script>
+{% endif %}
+
 {% endblock %}
