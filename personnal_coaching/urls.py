@@ -21,10 +21,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('', include("core.urls")),  # Ajoute cette ligne
+    path('', include("accounts.urls")), 
+    path('', include("seances.urls")), 
     path('admin/', admin.site.urls),
 ] + debug_toolbar_urls()
 
-#Pour la config debug_toolbar, pour les tests 
-if not settings.TESTING:
-    import debug_toolbar
-    urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]

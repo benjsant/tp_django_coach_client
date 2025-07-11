@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Page d'Inscription
+{% endblock %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <!-- Modal déjà connecté -->
+    <div class="modal fade" id="alreadyLoggedModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-success">
+          <div class="modal-header">
+            <h5 class="modal-title text-success">Déjà connecté</h5>
+          </div>
+          <div class="modal-body">Vous êtes déjà connecté. Redirection vers l'accueil en cours...</div>
+          <div class="modal-footer">
+            <a href="{% url 'core:index' %}" class="btn btn-success">Aller à l’accueil maintenant</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const modal = new bootstrap.Modal(document.getElementById('alreadyLoggedModal'))
+        modal.show()
+        // Redirection automatique après 2 secondes
+        setTimeout(() => {
+          window.location.href = "{% url 'core:index' %}"
+        }, 2000)
+      })
+    </script>
+  {% else %}
+    <div class="container py-5">
+      <!-- Présentation du coach -->
+      <div class="text-center mb-5">
+        <h1 class="display-4">Création de compte</h1>
+      </div>
+
+      <!-- Formulaire d'inscription -->
+      <section class="mb-5">
+        <form method="post">
+          {% csrf_token %}
+
+          {% for field in form %}
+            <div class="mb-3">
+              {{ field.label_tag }}
+              {{ field }}
+              {% if field.errors %}
+                <div class="text-danger small">{{ field.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <button type="submit" class="btn btn-success">S'inscrire</button>
+        </form>
+        <!-- TOAST SUCCÈS SOUS LE BOUTON -->
+        {% for message in messages %}
+          <div class="d-flex justify-content-center mt-4">
+            <div class="toast text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+              <div class="d-flex">
+                <div class="toast-body">{{ message }}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </section>
+    </div>
+  {% endif %}
+{% endblock %}
