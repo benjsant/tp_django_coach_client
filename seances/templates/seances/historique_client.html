@@ -17,7 +17,6 @@
           <tr>
             <th>Date</th>
             <th>Heure</th>
-            <th>Coach</th>
             <th>Objet</th>
             <th>Statut</th>
           </tr>
@@ -27,7 +26,6 @@
             <tr>
               <td>{{ rdv.date|date:"d/m/Y" }}</td>
               <td>{{ rdv.heure_debut|time:"H:i" }}</td>
-              <td>{{ rdv.coach.get_full_name|default:rdv.coach.username }}</td>
               <td>{{ rdv.objet }}</td>
               <td>
                 {% if rdv.code_rdv == 1 %}

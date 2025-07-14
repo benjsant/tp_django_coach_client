@@ -51,6 +51,8 @@ tp_django_coach_client
 
 ### 🧑‍🏫 Côté coach:
 
+
+
 - Dashboard du jour
     - Actions : annuler, marquer comme absent, confirmer fin
     - Modal avec textarea pour ajouter une note lors de la fin
@@ -106,7 +108,21 @@ tp_django_coach_client
     ```bash
     python manage.py createsuperuser
     ```
-    
+
+> ⚠️ **Important – Configuration initiale requise**
+>
+> L’application nécessite la présence de deux groupes d’utilisateurs dans la base de données :
+>
+> - `client`
+> - `coach`
+>
+> Par défaut, les utilisateurs créés via le formulaire d’inscription (`/signup/`) sont ajoutés au groupe `client`.  
+> Si vous souhaitez créer un coach, vous devez le faire manuellement via l’interface d’administration Django,  
+> et l’assigner au groupe `coach`.
+>
+> Ces groupes ne sont **pas créés automatiquement**.  
+> Vous devez donc les ajouter une fois via `/admin` (section « Groupes »), sans quoi l’application ne pourra pas rediriger correctement les utilisateurs vers leur dashboard.
+
 6.  **Lancer le serveur :**
     
     ```bash
