@@ -143,15 +143,17 @@ def dashboard_client(request):
     current_datetime = localtime(now())  # datetime aware au fuseau local
 
     mes_rendezvous = Seance.objects.filter(
-        client=request.user
+    client=request.user,
+    code_rdv=0
     ).filter(
         date__gt=current_datetime.date()
     ) | Seance.objects.filter(
         client=request.user,
+        code_rdv=0,
         date=current_datetime.date(),
         heure_debut__gt=current_datetime.time()
     )
-    mes_rendezvous = mes_rendezvous.order_by('date', 'heure_debut')
+
 
     context = {
         'is_client': True,
@@ -180,8 +182,10 @@ def dashboard_coach(request):
     # Ne récupérer que les séances du jour
     rendezvous_coach = Seance.objects.filter(
         coach=request.user,
-        date=today
+        date=today,
+        code_rdv=0
     ).order_by('heure_debut')
+
 
     context = {
         'is_client': False,
