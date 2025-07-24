@@ -1,8 +1,4 @@
 from django.contrib import admin
-
-# Register your models here.
-
-from .models import Seance,RdvHistorique
+from .models import Seance
 
 admin.site.register(Seance)
-admin.site.register(RdvHistorique)

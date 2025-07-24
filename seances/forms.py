@@ -1,40 +1,13 @@
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
 
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone 
 
-from .models import Seance 
-from seances.models import RdvHistorique
+from .models import Seance
 
-"""
-Ce module contient des formulaires pour la gestion des séances et des rendez-vous dans une application Django.
 
-Classes :
-- PriseSeanceForm : Formulaire pour permettre à un client de réserver un créneau chez un coach.
-- FinRdvForm : Formulaire pour permettre à un coach d'ajouter des notes ou commentaires à la fin d'un rendez-vous.
-- ModifierNoteHistoriqueForm : Formulaire pour modifier les notes d'un rendez-vous dans l'historique.
-
-"""
 class PriseSeanceForm(forms.ModelForm):
-    """
-    Formulaire pour qu’un client réserve un créneau chez le coach.
-
-    Ce formulaire inclut des validations pour s'assurer que :
-    - Le créneau est dans le futur.
-    - Les rendez-vous ne peuvent pas être réservés le week-end.
-    - Il n'y a pas de conflits avec d'autres rendez-vous (délai minimum de 10 minutes).
-
-    Attributs :
-    - OBJET_CHOICES : Liste des choix d'objets pour la séance.
-    - objet : Champ de sélection pour l'objet de la séance.
-
-    Méthodes :
-    - __init__() : Initialise le formulaire avec le client et le coach.
-    - clean() : Effectue les validations globales sur les données du formulaire.
-    - save() : Enregistre la séance en associant le client et le coach.
-    """
-
     OBJET_CHOICES = [
         ("Coaching personnel", "Coaching personnel"),
         ("Gestion du stress", "Gestion du stress"),
@@ -48,31 +21,19 @@ class PriseSeanceForm(forms.ModelForm):
         initial="Coaching personnel"
     )
 
-    """
-    Formulaire Bootstrap pour qu’un client réserve un créneau chez le coach.
-    Les validations métier (créneau dispo, marge de 10 min, horaires autorisés)
-    sont faites ici.
-    """
-
     class Meta:
         model = Seance
-        fields = ["date","heure_debut","objet"]
+        fields = ["date", "heure_debut", "objet"]
         widgets = {
-            "date": forms.DateInput(
-                attrs={"type":"date","class":"form-control"}
-            ),
-            "heure_debut":forms.TimeInput(
-                attrs={"type":"time","class":"form-control"}
-            ),
+            "date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+            "heure_debut": forms.TimeInput(attrs={"type": "time", "class": "form-control"}),
         }
 
-     # --- on injecte le client et le coach depuis la vue -------------------
     def __init__(self, *args, client=None, coach=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.client = client
         self.coach = coach
 
-    # --- validations globales --------------------------------------------
     def clean(self):
         cleaned = super().clean()
         date = cleaned.get("date")
@@ -80,24 +41,17 @@ class PriseSeanceForm(forms.ModelForm):
 
         if not date or not heure:
             return cleaned
-        
-        # 1) Créneau dans le futur
-        dt = datetime.combine(date,heure)
+
+        # Créneau dans le futur
+        dt = datetime.combine(date, heure)
         if timezone.make_aware(dt) < timezone.now():
             raise ValidationError("Impossible de réserver un créneau dans le passé.")
-        # # 2) Horaires autorisés (8h-20h)
-        # HORAIRE_MIN = time(8,0)
-        # HORAIRE_MAX = time(20,0)
-        # if not (HORAIRE_MIN <= heure <= HORAIRE_MAX):
-        #     raise ValidationError("Les rendez-vous doivent être pris entre 08h00 et 20h00.")
-        
-       
-        
-        # 🚫 Interdire les weekends
+
+        # Interdire les weekends
         if date.weekday() in (5, 6):
             raise ValidationError("Les rendez-vous ne sont pas disponibles le week-end (samedi ou dimanche).")
 
-        # 3) Conflits et délai mini 10 min pour ce coach
+        # Conflit de créneaux pour le coach
         delta = timedelta(minutes=10)
         clash = (
             Seance.objects
@@ -107,12 +61,10 @@ class PriseSeanceForm(forms.ModelForm):
         )
         if clash.exists():
             raise ValidationError("Ce créneau est trop proche d'un autre rendez-vous.")
-        
-        
+
         return cleaned
-    
-    # --- save ----------------------------------------------------------------
-    def save(self, commit = True):
+
+    def save(self, commit=True):
         seance = super().save(commit=False)
         seance.client = self.client
         seance.coach = self.coach
@@ -120,17 +72,9 @@ class PriseSeanceForm(forms.ModelForm):
             seance.full_clean()
             seance.save()
         return seance
-    
+
+
 class FinRdvForm(forms.Form):
-    """
-    Formulaire pour permettre à un coach d'ajouter des notes ou commentaires à la fin d'un rendez-vous.
-
-    Attributs :
-    - notes : Champ de texte pour saisir des notes ou commentaires facultatifs.
-
-    Méthodes :
-    - __init__() : Initialise le formulaire avec les attributs spécifiés.
-    """
     notes = forms.CharField(
         label="Note ou commentaire (facultatif)",
         widget=forms.Textarea(attrs={
@@ -141,26 +85,18 @@ class FinRdvForm(forms.Form):
         required=False
     )
 
+
 class ModifierNoteHistoriqueForm(forms.ModelForm):
-    """
-    Formulaire pour modifier les notes d'un rendez-vous dans l'historique.
-
-    Attributs :
-    - notes : Champ de texte pour modifier ou ajouter une note sur la séance.
-
-    Méthodes :
-    - __init__() : Initialise le formulaire avec les attributs spécifiés.
-    """
     class Meta:
-        model = RdvHistorique
-        fields = ['notes']
+        model = Seance  # ✅ Changement ici : on utilise Seance au lieu de RdvHistorique
+        fields = ['message']
         widgets = {
-            'notes': forms.Textarea(attrs={
+            'message': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
                 'placeholder': "Modifier ou ajouter une note sur cette séance"
             }),
         }
         labels = {
-            'notes': "Note ou commentaire",
+            'message': "Note ou commentaire",
         }

@@ -11,7 +11,7 @@
   <div class="dashboard-container p-4 my-5 shadow rounded-4">
     <h1 class="mb-4">Historique de mes séances</h1>
 
-    {% if mes_rdv_historiques %}
+    {% if historiques %}
       <table class="table table-striped table-hover">
         <thead>
           <tr>
@@ -22,7 +22,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for rdv in mes_rdv_historiques %}
+          {% for rdv in historiques %}
             <tr>
               <td>{{ rdv.date|date:"d/m/Y" }}</td>
               <td>{{ rdv.heure_debut|time:"H:i" }}</td>
@@ -30,14 +30,16 @@
               <td>
                 {% if rdv.code_rdv == 1 %}
                   <span class="badge bg-success">Présent</span>
-                {% elif rdv.code_rdv == 3 %}
-                  <span class="badge bg-danger">Annulé</span>
                 {% elif rdv.code_rdv == 2 %}
-                  <span class="badge bg-warning ">Absent</span>
+                  <span class="badge bg-warning">Absent</span>
+                {% elif rdv.code_rdv == 3 %}
+                  <span class="badge bg-danger">Annulé par client</span>
                 {% elif rdv.code_rdv == 4 %}
-                  <span class="badge bg-primary ">Annulation Coach</span>
+                  <span class="badge bg-primary">Annulé par coach</span>
+                {% elif rdv.date < today and rdv.code_rdv == 0 %}
+                  <span class="badge bg-secondary">Séance oubliée</span>
                 {% else %}
-                  <span class="badge bg-secondary">Inconnu</span> {{rdv.code_rdv}}
+                  <span class="badge bg-light text-dark">Non renseigné</span>
                 {% endif %}
               </td>
             </tr>
